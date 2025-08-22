@@ -1,10 +1,15 @@
-FROM node:14-alpine
+# Use a newer Node version
+FROM node:18-alpine
 
 WORKDIR /usr/app/event-bus
 
-COPY ./package.json ./
+# Copy package files and install dependencies
+COPY package*.json ./
 RUN npm install
 
-COPY ./ ./
+# Copy the rest of the app
+COPY . .
 
-CMD [ "npm" ,"start" ]
+# Start the app
+CMD ["npm", "start"]
+

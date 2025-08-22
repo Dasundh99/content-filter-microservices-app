@@ -1,10 +1,15 @@
-FROM node:14-alpine
+# Use Node 18 for modern JS support
+FROM node:18-alpine
 
 WORKDIR /usr/app/query
 
-COPY ./package.json ./
+# Copy package files and install dependencies
+COPY package*.json ./
 RUN npm install
 
-COPY ./ ./
+# Copy the rest of the app
+COPY . .
 
-CMD [ "npm" ,"start" ]
+# Start the app
+CMD ["npm", "start"]
+

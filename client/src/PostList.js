@@ -7,15 +7,20 @@ const PostList = () => {
   const [posts, setPosts] = useState({});
 
   const fetchPosts = async () => {
-    const res = await axios.get("http://posts.com/posts");
-    setPosts(res.data.data);
+    try {
+      const res = await axios.get("http://localhost:8003/posts");
+      setPosts(res.data.data);
+    } catch (err) {
+      console.error("Failed to fetch posts:", err.message);
+      alert("Error fetching posts. Check console for details.");
+    }
   };
 
   useEffect(() => {
     fetchPosts();
   }, []);
 
-  const renderedPosts = Object.values(posts).map(post => {
+  const renderedPosts = Object.values(posts).map((post) => {
     return (
       <div
         className="card"
@@ -25,7 +30,7 @@ const PostList = () => {
         <div className="card-body">
           <h3>{post.title}</h3>
           <CommentList postId={post.id} comments={post.comments} />
-          <CommentCreate postId={post.id} />
+          <CommentCreate postId={post.id} onCommentCreated={fetchPosts} />
         </div>
       </div>
     );
@@ -39,3 +44,4 @@ const PostList = () => {
 };
 
 export default PostList;
+

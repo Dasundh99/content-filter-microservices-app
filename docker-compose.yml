@@ -1,0 +1,83 @@
+services:
+  mongo:
+    image: mongo:4.4
+    container_name: mongo
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongo-data:/data/db
+
+  event-bus:
+    build: ./event-bus
+    container_name: event-bus
+    ports:
+      - "8005:8005"
+    depends_on:
+      - mongo
+    environment:
+      - MONGO_URI=mongodb://mongo:27017/microservices
+
+  posts-service:
+    build: ./posts
+    container_name: posts-service
+    ports:
+      - "8001:8001"
+    depends_on:
+      - mongo
+      - event-bus
+    environment:
+      - MONGO_URI=mongodb://mongo:27017/microservices
+
+  comments-service:
+    build: ./comments
+    container_name: comments-service
+    ports:
+      - "8002:8002"
+    depends_on:
+      - mongo
+      - event-bus
+    environment:
+      - MONGO_URI=mongodb://mongo:27017/microservices
+
+  query-service:
+    build: ./query
+    container_name: query-service
+    ports:
+      - "8003:8003"
+    depends_on:
+      - mongo
+      - event-bus
+    environment:
+      - MONGO_URI=mongodb://mongo:27017/microservices
+
+  moderation-service:
+    build: ./moderation
+    container_name: moderation-service
+    ports:
+      - "8004:8004"
+    depends_on:
+      - mongo
+      - event-bus
+    environment:
+      - MONGO_URI=mongodb://mongo:27017/microservices
+
+  frontend:
+    build: ./client
+    container_name: client
+    ports:
+      - "3000:3000"
+    depends_on:
+      - posts-service
+      - comments-service
+      - query-service
+      - moderation-service
+    environment:
+      - REACT_APP_POSTS_API=http://posts-service:8001
+      - REACT_APP_COMMENTS_API=http://comments-service:8002
+      - REACT_APP_QUERY_API=http://query-service:8003
+      - REACT_APP_MODERATION_API=http://moderation-service:8004
+      - REACT_APP_EVENT_BUS=http://event-bus:8005
+
+volumes:
+  mongo-data:
+
