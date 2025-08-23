@@ -1,0 +1,45 @@
+# ================= Frontend =================
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: frontend
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: frontend
+  template:
+    metadata:
+      labels:
+        app: frontend
+    spec:
+      containers:
+      - name: frontend
+        image: your-dockerhub-username/frontend:latest
+        ports:
+        - containerPort: 3000
+        env:
+        - name: REACT_APP_POSTS_API
+          value: http://posts-service:8001
+        - name: REACT_APP_COMMENTS_API
+          value: http://comments-service:8002
+        - name: REACT_APP_QUERY_API
+          value: http://query-service:8003
+        - name: REACT_APP_MODERATION_API
+          value: http://moderation-service:8004
+        - name: REACT_APP_EVENT_BUS
+          value: http://event-bus:8005
+        - name: REACT_APP_AUTH_API
+          value: http://auth-service:8006
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: frontend
+spec:
+  selector:
+    app: frontend
+  ports:
+    - port: 3000
+      targetPort: 3000
+  type: NodePort

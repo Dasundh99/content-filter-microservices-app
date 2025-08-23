@@ -1,0 +1,36 @@
+# posts-deployment.yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: posts-service
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: posts-service
+  template:
+    metadata:
+      labels:
+        app: posts-service
+    spec:
+      containers:
+      - name: posts-service
+        image: your-dockerhub-username/posts:latest
+        ports:
+        - containerPort: 8001
+        env:
+        - name: MONGO_URI
+          value: mongodb://mongo:27017/microservices
+        - name: JWT_SECRET
+          value: mysecretkey
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: posts-service
+spec:
+  selector:
+    app: posts-service
+  ports:
+    - port: 8001
+  type: ClusterIP

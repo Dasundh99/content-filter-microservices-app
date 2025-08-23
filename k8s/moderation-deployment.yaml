@@ -1,0 +1,36 @@
+# ================= Moderation Service =================
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: moderation-service
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: moderation-service
+  template:
+    metadata:
+      labels:
+        app: moderation-service
+    spec:
+      containers:
+      - name: moderation-service
+        image: your-dockerhub-username/moderation:latest
+        ports:
+        - containerPort: 8004
+        env:
+        - name: MONGO_URI
+          value: mongodb://mongo:27017/microservices
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: moderation-service
+spec:
+  selector:
+    app: moderation-service
+  ports:
+    - port: 8004
+  type: ClusterIP
+
+---

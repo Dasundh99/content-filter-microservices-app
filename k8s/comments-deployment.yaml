@@ -1,0 +1,36 @@
+# comments-deployment.yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: comments-service
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: comments-service
+  template:
+    metadata:
+      labels:
+        app: comments-service
+    spec:
+      containers:
+      - name: comments-service
+        image: your-dockerhub-username/comments:latest
+        ports:
+        - containerPort: 8002
+        env:
+        - name: MONGO_URI
+          value: mongodb://mongo:27017/microservices
+        - name: JWT_SECRET
+          value: mysecretkey
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: comments-service
+spec:
+  selector:
+    app: comments-service
+  ports:
+    - port: 8002
+  type: ClusterIP

@@ -1,0 +1,36 @@
+# ================= Query Service =================
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: query-service
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: query-service
+  template:
+    metadata:
+      labels:
+        app: query-service
+    spec:
+      containers:
+      - name: query-service
+        image: your-dockerhub-username/query:latest
+        ports:
+        - containerPort: 8003
+        env:
+        - name: MONGO_URI
+          value: mongodb://mongo:27017/microservices
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: query-service
+spec:
+  selector:
+    app: query-service
+  ports:
+    - port: 8003
+  type: ClusterIP
+
+---

@@ -1,0 +1,36 @@
+# ================= Event Bus =================
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: event-bus
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: event-bus
+  template:
+    metadata:
+      labels:
+        app: event-bus
+    spec:
+      containers:
+      - name: event-bus
+        image: your-dockerhub-username/event-bus:latest
+        ports:
+        - containerPort: 8005
+        env:
+        - name: MONGO_URI
+          value: mongodb://mongo:27017/microservices
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: event-bus
+spec:
+  selector:
+    app: event-bus
+  ports:
+    - port: 8005
+  type: ClusterIP
+
+---
