@@ -1,3 +1,5 @@
+version: "3.8"
+
 services:
   mongo:
     image: mongo:4.4
@@ -17,6 +19,18 @@ services:
     environment:
       - MONGO_URI=mongodb://mongo:27017/microservices
 
+  auth-service:
+    build: ./auth
+    container_name: auth-service
+    ports:
+      - "8006:8006"
+    depends_on:
+      - mongo
+    environment:
+      - MONGO_URI=mongodb://mongo:27017/auth
+      - JWT_SECRET=mysecretkey
+    restart: unless-stopped
+
   posts-service:
     build: ./posts
     container_name: posts-service
@@ -25,8 +39,11 @@ services:
     depends_on:
       - mongo
       - event-bus
+      - auth-service
     environment:
       - MONGO_URI=mongodb://mongo:27017/microservices
+      - JWT_SECRET=mysecretkey
+    restart: unless-stopped
 
   comments-service:
     build: ./comments
@@ -36,8 +53,11 @@ services:
     depends_on:
       - mongo
       - event-bus
+      - auth-service
     environment:
       - MONGO_URI=mongodb://mongo:27017/microservices
+      - JWT_SECRET=mysecretkey
+    restart: unless-stopped
 
   query-service:
     build: ./query
@@ -49,6 +69,7 @@ services:
       - event-bus
     environment:
       - MONGO_URI=mongodb://mongo:27017/microservices
+    restart: unless-stopped
 
   moderation-service:
     build: ./moderation
@@ -60,6 +81,7 @@ services:
       - event-bus
     environment:
       - MONGO_URI=mongodb://mongo:27017/microservices
+    restart: unless-stopped
 
   frontend:
     build: ./client
@@ -71,12 +93,15 @@ services:
       - comments-service
       - query-service
       - moderation-service
+      - auth-service
     environment:
       - REACT_APP_POSTS_API=http://posts-service:8001
       - REACT_APP_COMMENTS_API=http://comments-service:8002
       - REACT_APP_QUERY_API=http://query-service:8003
       - REACT_APP_MODERATION_API=http://moderation-service:8004
       - REACT_APP_EVENT_BUS=http://event-bus:8005
+      - REACT_APP_AUTH_API=http://auth-service:8006
+    restart: unless-stopped
 
 volumes:
   mongo-data:

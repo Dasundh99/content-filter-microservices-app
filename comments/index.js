@@ -8,18 +8,20 @@ const Comment = require('./models/Comment');
 
 const app = express();
 
+// Middleware
 app.use(bodyParser.json());
 app.use(cors({ origin: '*' })); // Allow all origins for simplicity
 
-// ✅ MongoDB connection (Docker-ready)
+// MongoDB connection (Docker-ready)
 const mongoUri = process.env.MONGO_URI || 'mongodb://mongo:27017/microservices';
-
 mongoose.connect(mongoUri)
   .then(() => console.log(`✅ Connected to MongoDB (${process.env.SERVICE_NAME || 'Comments Service'})`))
   .catch(err => {
     console.error('❌ MongoDB connection failed:', err.message);
     process.exit(1); // Exit if DB is unreachable
   });
+
+// Routes
 
 // Get comments for a post
 app.get('/posts/:id/comments', async (req, res) => {
@@ -37,8 +39,9 @@ app.post('/posts/:id/comments', async (req, res) => {
   const comment = new Comment({ id, content, status: 'pending', postId });
   await comment.save();
 
+  // Emit commentCreated event to Event Bus
   try {
-    await axios.post('http://event-bus:8005/events', { // <-- use Docker service name
+    await axios.post('http://event-bus:8005/events', {
       type: 'commentCreated',
       data: { id, content, status: 'pending', postId },
     });
@@ -56,10 +59,12 @@ app.post('/events', async (req, res) => {
   if (type === 'commentModerated') {
     const { postId, id, status } = data;
     const comment = await Comment.findOne({ id, postId });
+
     if (comment) {
       comment.status = status;
       await comment.save();
 
+      // Emit commentUpdated event to Event Bus
       try {
         await axios.post('http://event-bus:8005/events', {
           type: 'commentUpdated',
@@ -77,9 +82,13 @@ app.post('/events', async (req, res) => {
 // Optional debug route
 app.get('/db', async (req, res) => {
   const comments = await Comment.find();
-  res.status(200).send(`<p>Comments Service DB</p><pre>${JSON.stringify(comments, null, "\t")}</pre>`);
+  res.status(200).send(`
+    <p>Comments Service DB</p>
+    <pre>${JSON.stringify(comments, null, "\t")}</pre>
+  `);
 });
 
+// Start server
 app.listen(8002, () => {
   console.log('Comments Service listening on http://localhost:8002');
 });
