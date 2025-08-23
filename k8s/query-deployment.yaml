@@ -15,7 +15,7 @@ spec:
     spec:
       containers:
       - name: query-service
-        image: your-dockerhub-username/query:latest
+        image: simple-microservices-query-service
         ports:
         - containerPort: 8003
         env:

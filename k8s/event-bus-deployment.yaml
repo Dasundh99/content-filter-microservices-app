@@ -15,7 +15,7 @@ spec:
     spec:
       containers:
       - name: event-bus
-        image: your-dockerhub-username/event-bus:latest
+        image: simple-microservices-event-bus
         ports:
         - containerPort: 8005
         env:

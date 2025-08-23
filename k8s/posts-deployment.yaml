@@ -15,7 +15,7 @@ spec:
     spec:
       containers:
       - name: posts-service
-        image: your-dockerhub-username/posts:latest
+        image: simple-microservices-posts-service
         ports:
         - containerPort: 8001
         env:

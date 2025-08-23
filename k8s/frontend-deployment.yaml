@@ -15,7 +15,7 @@ spec:
     spec:
       containers:
       - name: frontend
-        image: your-dockerhub-username/frontend:latest
+        image: simple-microservices-frontend
         ports:
         - containerPort: 3000
         env:

@@ -15,7 +15,7 @@ spec:
     spec:
       containers:
       - name: comments-service
-        image: your-dockerhub-username/comments:latest
+        image: simple-microservices-comments-service
         ports:
         - containerPort: 8002
         env:

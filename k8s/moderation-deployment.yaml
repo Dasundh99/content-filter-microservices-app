@@ -15,7 +15,7 @@ spec:
     spec:
       containers:
       - name: moderation-service
-        image: your-dockerhub-username/moderation:latest
+        image: simple-microservices-moderation-service
         ports:
         - containerPort: 8004
         env:
