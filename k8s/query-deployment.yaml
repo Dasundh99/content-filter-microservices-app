@@ -1,4 +1,3 @@
-# ================= Query Service =================
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -15,22 +14,21 @@ spec:
     spec:
       containers:
       - name: query-service
-        image: simple-microservices-query-service
+        image: simple-microservices-query-service:latest
+        imagePullPolicy: IfNotPresent
         ports:
         - containerPort: 8003
-        env:
-        - name: MONGO_URI
-          value: mongodb://mongo:27017/microservices
 ---
 apiVersion: v1
 kind: Service
 metadata:
   name: query-service
 spec:
+  type: NodePort
   selector:
     app: query-service
   ports:
-    - port: 8003
-  type: ClusterIP
+  - port: 8003
+    targetPort: 8003
+    nodePort: 30003
 
----

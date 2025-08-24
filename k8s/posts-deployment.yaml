@@ -1,10 +1,9 @@
-# posts-deployment.yaml
 apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: posts-service
 spec:
-  replicas: 3
+  replicas: 1
   selector:
     matchLabels:
       app: posts-service
@@ -15,22 +14,21 @@ spec:
     spec:
       containers:
       - name: posts-service
-        image: simple-microservices-posts-service
+        image: simple-microservices-posts-service:latest
+        imagePullPolicy: IfNotPresent
         ports:
         - containerPort: 8001
-        env:
-        - name: MONGO_URI
-          value: mongodb://mongo:27017/microservices
-        - name: JWT_SECRET
-          value: mysecretkey
 ---
 apiVersion: v1
 kind: Service
 metadata:
   name: posts-service
 spec:
+  type: NodePort
   selector:
     app: posts-service
   ports:
-    - port: 8001
-  type: ClusterIP
+  - port: 8001
+    targetPort: 8001
+    nodePort: 30001
+

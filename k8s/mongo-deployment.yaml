@@ -1,4 +1,3 @@
-# mongo-deployment.yaml
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -16,23 +15,26 @@ spec:
       containers:
       - name: mongo
         image: mongo:4.4
+        imagePullPolicy: IfNotPresent
         ports:
         - containerPort: 27017
         volumeMounts:
-        - name: mongo-storage
+        - name: mongo-data
           mountPath: /data/db
       volumes:
-      - name: mongo-storage
-        persistentVolumeClaim:
-          claimName: mongo-pvc
+      - name: mongo-data
+        emptyDir: {}
 ---
 apiVersion: v1
 kind: Service
 metadata:
   name: mongo
 spec:
+  type: NodePort
   selector:
     app: mongo
   ports:
-    - port: 27017
-  type: ClusterIP
+  - port: 27017
+    targetPort: 27017
+    nodePort: 30017
+

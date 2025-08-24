@@ -1,4 +1,3 @@
-# ================= Event Bus =================
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -15,22 +14,21 @@ spec:
     spec:
       containers:
       - name: event-bus
-        image: simple-microservices-event-bus
+        image: simple-microservices-event-bus:latest
+        imagePullPolicy: IfNotPresent
         ports:
         - containerPort: 8005
-        env:
-        - name: MONGO_URI
-          value: mongodb://mongo:27017/microservices
 ---
 apiVersion: v1
 kind: Service
 metadata:
   name: event-bus
 spec:
+  type: NodePort
   selector:
     app: event-bus
   ports:
-    - port: 8005
-  type: ClusterIP
+  - port: 8005
+    targetPort: 8005
+    nodePort: 30005
 
----

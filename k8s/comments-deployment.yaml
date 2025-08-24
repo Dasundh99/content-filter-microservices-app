@@ -1,10 +1,9 @@
-# comments-deployment.yaml
 apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: comments-service
 spec:
-  replicas: 3
+  replicas: 1
   selector:
     matchLabels:
       app: comments-service
@@ -15,22 +14,21 @@ spec:
     spec:
       containers:
       - name: comments-service
-        image: simple-microservices-comments-service
+        image: simple-microservices-comments-service:latest
+        imagePullPolicy: IfNotPresent
         ports:
         - containerPort: 8002
-        env:
-        - name: MONGO_URI
-          value: mongodb://mongo:27017/microservices
-        - name: JWT_SECRET
-          value: mysecretkey
 ---
 apiVersion: v1
 kind: Service
 metadata:
   name: comments-service
 spec:
+  type: NodePort
   selector:
     app: comments-service
   ports:
-    - port: 8002
-  type: ClusterIP
+  - port: 8002
+    targetPort: 8002
+    nodePort: 30002
+
