@@ -1,58 +1,122 @@
-# A Simple Microservice App with Node.js, React.js and Express
+# Content Filter Cloud Project
 
-> WIP
+A **microservices-based content filter application** deployed using Docker and Kubernetes (Minikube). This project demonstrates a cloud-native approach to managing content filtering, including services for authentication, posts, comments, moderation, queries, and event handling.
 
-This is a simple microservice application built with Node.js, React.js and Express. It allows users to add post titles and comments, while comments containing the word "orange" are rejected. The application consists of 5 services and a react frontend each located in its own folder.
+---
 
-## Features
+## Table of Contents
 
-- Add post titles
-- Add comments
-- Rejection of comments containing the word "orange"
+- [Project Overview](#project-overview)  
+- [Prerequisites](#prerequisites)  
+- [Docker Setup](#docker-setup)  
+- [Kubernetes Setup](#kubernetes-setup)  
+- [Running the Application](#running-the-application)  
+- [Stopping the Application](#stopping-the-application)  
+- [Useful Commands](#useful-commands)
 
-## Services
+---
 
-- Post service to create posts (running on port 8001)
-- Comments service to add comments (running on port 8002)
-- Query service to fetch all comments and posts together and display them on frontend. (running on port 8003)
-- Moderation service to moderate comments (running on port 8004)
-- A Simple event bus (running on port 8005)
+## Project Overview
 
-## Getting Started
+This project includes the following microservices:
 
-These instructions will get you a copy of the project up and running on your local machine for development and testing purposes.
+- **Frontend**: React client application  
+- **Auth Service**: Handles user authentication  
+- **Posts Service**: Manages posts  
+- **Comments Service**: Handles comments on posts  
+- **Moderation Service**: Content moderation  
+- **Query Service**: Query aggregator service  
+- **Event Bus**: Event-driven communication between microservices  
+
+All services can be run locally using Docker Compose or deployed on Kubernetes using Minikube.
+
+---
 
 ## Prerequisites
 
-You will need to have Node.js and npm installed on your machine to run this application. You can download the latest version of Node.js from the official website: https://nodejs.org/
+- Docker  
+- Docker Compose  
+- Minikube  
+- kubectl  
 
-## Running the Services
+---
 
-The application consists of five microservices: post service, comments service, query service, moderation service, and an event bus. Each service is located in its own folder, and to run each service, you will need to navigate to the folder and run the following commands:
+## Docker Setup
+
+1. **Build and run services with Docker Compose**
 
 ```bash
-cd <service-folder>
-npm install
-npm dev # to start a development server
+docker compose up --build
+````
+
+2. **Build individual Docker images (if needed)**
+
+```bash
+docker build -t content-filter-microservices-app-frontend:latest ./client
+docker build -t content-filter-microservices-app-auth-service:latest ./auth
+docker build -t content-filter-microservices-app-posts-service:latest ./posts
+docker build -t content-filter-microservices-app-comments-service:latest ./comments
+docker build -t content-filter-microservices-app-moderation-service:latest ./moderation
+docker build -t content-filter-microservices-app-query-service:latest ./query
+docker build -t content-filter-microservices-app-event-bus:latest ./event-bus
 ```
 
-## Running the Frontend
+---
 
-1. Navigate to `client` directory
-2. Run `npm install` to install dependencies
-3. Run `npm run start` to start a local development server
+## Kubernetes Setup (Minikube)
 
-## Built With
+1. **Start Minikube with Docker driver**
 
-- [Node.js](https://nodejs.org) - JavaScript runtime
-- [Express](https://expressjs.com) - Node.js web application framework
-- [React.js](https://reactjs.org) - JavaScript library for building user interfaces
-- [Bootstrap](https://getbootstrap.com) - CSS framework
+```bash
+minikube start --driver=docker
+```
 
-## In-Memory Database
+2. **Check Minikube status**
 
-The application uses a JavaScript object as an in-memory database to store the post titles and comments. This allows for quick and easy storage and retrieval of data without the need for a persistent database.
+```bash
+minikube status
+```
 
-## Note
-Please note that this application is for learning purposes only and is not intended for production use. The in-memory database may not be suitable for larger applications and a persistent database such as MongoDB should be used instead.
+3. **Use Minikube Docker environment**
 
+```bash
+eval $(minikube docker-env)
+```
+
+4. **Deploy the application to Kubernetes**
+
+```bash
+kubectl apply -f k8s/
+```
+
+5. **Delete the deployment if needed**
+
+```bash
+kubectl delete -f k8s/
+```
+
+6. **Check all Kubernetes resources**
+
+```bash
+kubectl get all
+kubectl get pods -w
+```
+
+7. **Access the frontend service**
+
+```bash
+minikube service frontend
+```
+
+---
+
+## Useful Commands
+
+* Rebuild Docker Compose containers: `docker compose up --build`
+* Monitor pods: `kubectl get pods -w`
+* Delete Kubernetes deployment: `kubectl delete -f k8s/`
+* Access frontend in browser: `minikube service frontend`
+
+---
+Do you want me to do that?
+```
