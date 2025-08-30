@@ -8,7 +8,7 @@ const PostList = () => {
 
   const fetchPosts = async () => {
     try {
-      const res = await axios.get("http://localhost:8003/posts");
+      const res = await axios.get("http://posts-service:8001/posts");
       setPosts(res.data.data);
     } catch (err) {
       console.error("Failed to fetch posts:", err.message);

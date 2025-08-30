@@ -14,7 +14,7 @@ const AuthPage = ({ onAuthSuccess }) => {
     try {
       if (isSignUp) {
         // SIGNUP
-        const signupRes = await axios.post("http://localhost:8006/signup", { username, password });
+        const signupRes = await axios.post("http://192.168.67.2:30006/signup", { username, password });
         setMessage(signupRes.data.message + " Please sign in.");
 
         // Switch to SignIn automatically
@@ -23,7 +23,7 @@ const AuthPage = ({ onAuthSuccess }) => {
 
       } else {
         // SIGNIN
-        const loginRes = await axios.post("http://localhost:8006/login", { username, password });
+        const loginRes = await axios.post("http://192.168.67.2:30006/login", { username, password });
         const token = loginRes.data.token;
         localStorage.setItem("token", token);
         setMessage("Login successful!");

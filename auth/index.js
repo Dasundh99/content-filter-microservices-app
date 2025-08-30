@@ -8,16 +8,26 @@ const cors = require("cors");
 const app = express();
 app.use(bodyParser.json());
 
-// CORS setup
+// ✅ Correct CORS setup
+const allowedOrigins = ["http://localhost:3000", "http://192.168.67.2:31673"];
+
 const corsOptions = {
-  origin: "http://localhost:3000", // React app origin
+  origin: function (origin, callback) {
+    // Allow requests with no origin (like Postman) or from allowed origins
+    if (!origin || allowedOrigins.includes(origin)) {
+      callback(null, true);
+    } else {
+      callback(new Error("Not allowed by CORS"));
+    }
+  },
   methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
   allowedHeaders: ["Content-Type", "Authorization"]
 };
-app.use(cors(corsOptions));
-app.options("*", cors(corsOptions)); // handle preflight requests
 
-// Connect to MongoDB (with retry for Docker)
+app.use(cors(corsOptions));
+app.options("*", cors(corsOptions)); // Handle preflight requests
+
+// ✅ MongoDB connection with retry
 const connectWithRetry = () => {
   mongoose.connect("mongodb://mongo:27017/auth", {
     useNewUrlParser: true,
@@ -30,7 +40,7 @@ const connectWithRetry = () => {
 };
 connectWithRetry();
 
-// User model
+// ✅ User model
 const UserSchema = new mongoose.Schema({
   username: { type: String, unique: true },
   password: String
@@ -39,21 +49,18 @@ const User = mongoose.model("User", UserSchema);
 
 const JWT_SECRET = process.env.JWT_SECRET || "mysecretkey";
 
-// Signup endpoint
+// ✅ Signup endpoint
 app.post("/signup", async (req, res) => {
   const { username, password } = req.body;
 
   try {
-    // Check if user exists
     const existingUser = await User.findOne({ username });
     if (existingUser) {
       return res.status(400).json({ error: "User already exists" });
     }
 
-    // Hash the password
     const hashedPassword = await bcrypt.hash(password, 10);
 
-    // Save new user to DB
     const newUser = new User({ username, password: hashedPassword });
     await newUser.save();
 
@@ -64,20 +71,17 @@ app.post("/signup", async (req, res) => {
   }
 });
 
-// Login endpoint
+// ✅ Login endpoint
 app.post("/login", async (req, res) => {
   const { username, password } = req.body;
 
   try {
-    // Find user in DB
     const user = await User.findOne({ username });
     if (!user) return res.status(400).json({ error: "Invalid credentials" });
 
-    // Compare password
     const isPasswordValid = await bcrypt.compare(password, user.password);
     if (!isPasswordValid) return res.status(400).json({ error: "Invalid credentials" });
 
-    // Create JWT token
     const token = jwt.sign({ id: user._id, username }, JWT_SECRET, { expiresIn: "1h" });
     res.status(200).json({ token });
   } catch (err) {

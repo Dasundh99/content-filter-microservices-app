@@ -8,7 +8,23 @@ const QueryPost = require("./models/Post");
 const app = express();
 
 app.use(bodyParser.json());
-app.use(cors({ origin: "http://localhost:3000" }));
+
+// ✅ Allow multiple origins (localhost & LAN frontend)
+const allowedOrigins = [
+  "http://localhost:3000",
+  "http://192.168.67.2:31673" // your LAN React app
+];
+
+app.use(cors({
+  origin: function (origin, callback) {
+    if (!origin || allowedOrigins.includes(origin)) {
+      callback(null, true);
+    } else {
+      callback(new Error("Not allowed by CORS"));
+    }
+  },
+  credentials: true
+}));
 
 // ✅ Connect to MongoDB (Docker-ready)
 const mongoUri = process.env.MONGO_URI || "mongodb://mongo:27017/microservices";
@@ -17,7 +33,7 @@ mongoose.connect(mongoUri)
   .then(() => console.log("✅ Connected to MongoDB (Query Service)"))
   .catch(err => {
     console.error("❌ MongoDB connection failed:", err.message);
-    process.exit(1); // Exit if DB not reachable
+    process.exit(1);
   });
 
 // ✅ Event Handler
@@ -71,7 +87,6 @@ app.listen(8003, async () => {
   console.log("🚀 Query Service listening on http://localhost:8003");
 
   try {
-    // Use Docker service name for Event Bus
     const { data } = await axios.get("http://event-bus:8005/events");
     for (let event of data) {
       await handleEvents(event.type, event.data);
