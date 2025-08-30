@@ -117,6 +117,3 @@ minikube service frontend
 * Delete Kubernetes deployment: `kubectl delete -f k8s/`
 * Access frontend in browser: `minikube service frontend`
 
----
-Do you want me to do that?
-```
