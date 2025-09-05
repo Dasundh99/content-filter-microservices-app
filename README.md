@@ -6,7 +6,10 @@ A **microservices-based content filter application** deployed using Docker and K
 
 ## Table of Contents
 
-- [Project Overview](#project-overview)  
+- [Project Overview](#project-overview)
+- [Architecture Diagram](#architecture-diagram)  
+- [Demo Video](#demo-video)  
+- [Project Report](#project-report) 
 - [Prerequisites](#prerequisites)  
 - [Docker Setup](#docker-setup)  
 - [Kubernetes Setup](#kubernetes-setup)  
@@ -29,6 +32,22 @@ This project includes the following microservices:
 - **Event Bus**: Event-driven communication between microservices  
 
 All services can be run locally using Docker Compose or deployed on Kubernetes using Minikube.
+
+---
+
+## Architecture Diagram  
+
+Below is the overall architecture of the Content Filter Cloud Project:  
+
+![Architecture Diagram](./assets/architecture.png)  
+
+---
+
+## Project Report  
+
+A detailed report explaining the architecture, implementation, and results of the project is available here:  
+
+📄 [Download the Project Report](./docs/Cloud_Project_3818_3964_4061_4146 .pdf)  
 
 ---
 
