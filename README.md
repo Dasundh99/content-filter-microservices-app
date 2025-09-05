@@ -39,7 +39,8 @@ All services can be run locally using Docker Compose or deployed on Kubernetes u
 
 Below is the overall architecture of the Content Filter Cloud Project:  
 
-![Architecture Diagram](./assets/Cloud_Project_3818_3964_4061_4146.jpg)  
+![Architecture Diagram](./assets/Cloud_Project_3818_3964_4061_4146.jpg)
+
 
 ---
 
